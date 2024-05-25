@@ -32,7 +32,7 @@ def read_xml():
     with open(xml_file_path, "r") as file:
         xml_content = file.read()
 
-    response_content = "No CountriesIncluded information found"
+    response_content = "No Countries Included information found"
     root = ET.fromstring(xml_content)
     for element in root.iter():
         if (
