@@ -25,15 +25,24 @@ def hello_world():
 
 @app.route("/read_xml")
 def read_xml():
-    print("****")
+    print("**** /read_xml")
     xml_content = None
-    xml_file_path = "sample_data/1.xml"
+    xml_file_path = "sample_data/4.xml"
+
     with open(xml_file_path, "r") as file:
         xml_content = file.read()
 
+    response_content = "No CountriesIncluded information found"
     root = ET.fromstring(xml_content)
-    print("root", root)
-    response_content = "Wot u looking at"
+    find = root.find('x450')
+    print('find', find)
+    for element in root.iter():
+        if (
+            element.tag in ['x450', 'x449', 'CountriesIncluded']
+            and element.text
+        ):
+            response_content = element.text
+            break
 
     return Response(response_content, mimetype="text/plain")
 
