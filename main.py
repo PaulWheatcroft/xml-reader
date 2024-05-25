@@ -1,24 +1,22 @@
-import pymysql
+import os
+import psycopg
 
-timeout = 10
-connection = pymysql.connect(
-    charset="utf8mb4",
-    connect_timeout=timeout,
-    cursorclass=pymysql.cursors.DictCursor,
-    db="defaultdb",
-    host="mysql-2c81871c-pw-perlego-onix3.h.aivencloud.com",
-    password="AVNS_OhCWJ56WY3qNQ-hZbb0",
-    read_timeout=timeout,
-    port=19484,
-    user="avnadmin",
-    write_timeout=timeout,
-)
+os.environ['PGHOST'] = 'generally-busy-robin-iad.a1.pgedge.io'
+os.environ['PGUSER'] = 'admin'
+os.environ['PGDATABASE'] = 'perlego_interview'
+os.environ['PGSSLMODE'] = 'require'
+os.environ['PGPASSWORD'] = '1AZwRsAH049P4132WG8Vmt2P'
 
-try:
+
+def main():
+    connection = psycopg.connect()
     cursor = connection.cursor()
-    cursor.execute("CREATE TABLE mytest (id INTEGER PRIMARY KEY)")
-    cursor.execute("INSERT INTO mytest (id) VALUES (1), (2)")
-    cursor.execute("SELECT * FROM mytest")
-    print(cursor.fetchall())
-finally:
+    cursor.execute('SELECT node_name FROM spock.node')
+    node_names = [row[0] for row in cursor.fetchall()]
+    cursor.close()
     connection.close()
+    print(node_names)
+
+
+if __name__ == '__main__':
+    main()
