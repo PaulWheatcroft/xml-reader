@@ -1,6 +1,8 @@
 import xml.etree.ElementTree as ET
-from flask import Flask, Response, request
+from flask import Flask, Response, request, jsonify
 import re
+
+from utils.book import get_book_details
 
 app = Flask(__name__)
 
@@ -26,28 +28,8 @@ def hello_world():
 
 @app.route("/read_xml")
 def read_xml():
-    xml_content = None
-    xml_file_path = "sample_data/1.xml"
-
-    with open(xml_file_path, "r") as file:
-        xml_content = file.read()
-
-    response_content = "No Countries Included information found"
-    root = ET.fromstring(xml_content)
-    for element in root.iter():
-        if (
-            element.tag in ['x450', 'x449', 'CountriesIncluded']
-            and element.text
-        ):
-            string_countries = element.text
-            if element.tag == 'x449' or element.tag == 'CountriesIncluded':
-                response_content = re.split(r'\s+', string_countries)
-                for country in response_content:
-                    print('*****', country)
-            else:
-                response_content = string_countries
-
-    return Response(response_content, mimetype="text/plain")
+    response = get_book_details()
+    return jsonify(response)
 
 
 if __name__ == "__main__":
