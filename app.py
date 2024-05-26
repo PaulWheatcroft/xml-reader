@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, render_template
 import os
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import Integer, String
@@ -70,6 +70,12 @@ def hello_world():
 def read_xml():
     response = get_xml_book_details()
     return jsonify(response)
+
+
+@app.route('/books')
+def display_books():
+    books = Book.query.all()
+    return render_template('books.html', books=books)
 
 
 if __name__ == "__main__":
