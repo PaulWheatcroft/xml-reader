@@ -7,7 +7,7 @@ book_details = {"product_id_type": "", "id_value": "", "title_text": ""}
 countries_included = []
 
 
-def get_book_details():
+def get_xml_book_details():
     xml_content = None
     xml_file_path = "sample_data/4.xml"
 

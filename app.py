@@ -1,8 +1,6 @@
-import xml.etree.ElementTree as ET
-from flask import Flask, Response, request, jsonify
-import re
+from flask import Flask, request, jsonify
 
-from utils.book import get_book_details
+from utils.book import get_xml_book_details
 
 app = Flask(__name__)
 
@@ -28,7 +26,7 @@ def hello_world():
 
 @app.route("/read_xml")
 def read_xml():
-    response = get_book_details()
+    response = get_xml_book_details()
     return jsonify(response)
 
 
