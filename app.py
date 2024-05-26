@@ -58,6 +58,46 @@ book_country = db.Table(
 )
 
 
+def add_countries_included(country_short_code, book_id):
+    if country_short_code == "WORLD":
+        print("add to everything")
+    country = Country.query.filter_by(
+        country_short_code=country_short_code
+    ).first()
+    if country:
+        with Session(engine) as session:
+            stmt = book_country.insert().values(
+                book_id=book_id, country_id=country.id
+            )
+            session.execute(stmt)
+            session.commit()
+
+
+def amend_countries_included(book_id, new_countries_included):
+    current_country_ids = [
+        row.country_id
+        for row in db.session.query(book_country.c.country_id)
+        .filter_by(book_id=book_id)
+        .all()
+    ]
+    new_country_ids = []
+    for new_country_included in new_countries_included:
+        country = Country.query.filter_by(
+            country_short_code=new_country_included
+        ).first()
+        if country:
+            new_country_ids.append(country.id)
+
+    for country_id in new_country_ids:
+        if country_id not in current_country_ids:
+            with Session(engine) as session:
+                stmt = book_country.insert().values(
+                    book_id=book_id, country_id=country_id
+                )
+                session.execute(stmt)
+                session.commit()
+
+
 @app.route('/', methods=['GET', 'POST'])
 def home_page():
     if request.method == 'POST':
@@ -93,22 +133,10 @@ def read_xml():
         db.session.add(new_book)
         db.session.commit()
         book_id = new_book.id
+        for country_short_code in countries_included:
+            add_countries_included(country_short_code, book_id)
     else:
-        book_id = book.id
-
-    for country_short_code in countries_included:
-        if country_short_code == "WORLD":
-            break
-        country = Country.query.filter_by(
-            country_short_code=country_short_code
-        ).first()
-        if country:
-            with Session(engine) as session:
-                stmt = book_country.insert().values(
-                    book_id=book_id, country_id=country.id
-                )
-                session.execute(stmt)
-                session.commit()
+        amend_countries_included(book.id, countries_included)
 
     return jsonify(response)
 
