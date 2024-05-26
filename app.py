@@ -41,7 +41,12 @@ class Book(db.Model):
 class Country(db.Model):
     __tablename__ = 'countries'
     id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(255))
     country_short_code = db.Column(db.String(2))
+
+    def __init__(self, country_short_code, name):
+        self.name = name
+        self.country_short_code = country_short_code
 
 
 book_country = db.Table(
