@@ -1,20 +1,17 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
+from app import Country, engine
 
-from app import Country
-
-# Create an engine to connect to your database
-engine = create_engine(
-    "postgresql://admin:1AZwRsAH049P4132WG8Vmt2P@generally-busy-robin.a1.pgedge.io/perlego_interview?sslmode=require"
-)
-
-# Create a session factory
 Session = sessionmaker(bind=engine)
 
-# Create a session
 session = Session()
 
 country_codes = [
+    {"name": "Montenegro", "code": "ME"},
+    {"name": "Saint Barthélemy", "code": "BL"},
+    {"name": "Saint Martin", "code": "MF"},
+    {"name": "Serbia", "code": "RS"},
+    {"name": "South Sudan", "code": "SS"},
     {"name": "United Kingdom", "code": "GB"},
     {"name": "France", "code": "FR"},
     {"name": "Afghanistan", "code": "AF"},
@@ -261,13 +258,10 @@ country_codes = [
 ]
 
 for country in country_codes:
-    # Create a new Country object
     new_country = Country(
         name=country['name'], country_short_code=country['code']
     )
 
-    # Add the new country to the session
     session.add(new_country)
 
-# Commit the changes to the database
 session.commit()

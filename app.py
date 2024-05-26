@@ -1,10 +1,8 @@
 from flask import Flask, request, jsonify, render_template
-import os
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy.orm import DeclarativeBase
+from sqlalchemy import create_engine
+from sqlalchemy.orm import DeclarativeBase, Session
 from utils.book import get_xml_book_details
-
-print(os.environ.get('VIRTUAL_ENV'))
 
 
 class Base(DeclarativeBase):
@@ -14,6 +12,10 @@ class Base(DeclarativeBase):
 db = SQLAlchemy(model_class=Base)
 
 app = Flask(__name__)
+
+engine = create_engine(
+    "postgresql://admin:1AZwRsAH049P4132WG8Vmt2P@generally-busy-robin.a1.pgedge.io/perlego_interview?sslmode=require"
+)
 
 app.config["SQLALCHEMY_DATABASE_URI"] = (
     "postgresql://admin:1AZwRsAH049P4132WG8Vmt2P@generally-busy-robin.a1.pgedge.io/perlego_interview?sslmode=require"
@@ -57,7 +59,7 @@ book_country = db.Table(
 
 
 @app.route('/', methods=['GET', 'POST'])
-def hello_world():
+def home_page():
     if request.method == 'POST':
         file = request.files['xml_file']
         if file:
@@ -80,21 +82,34 @@ def read_xml():
     response = get_xml_book_details()
     book_details = response["book_details"]
     countries_included = response["countries_included"]
-    book = Book.query.filter_by(
-        id_value=response["book_details"]["id_value"]
-    ).first()
-    if book is None:
-        print("Make a book")
-        book = Book(
-            book_details['id_value'],
-            book_details['product_id_type'],
-            book_details['title_text'],
-        )
-        db.session.add(book)
-        db.session.commit()
 
-    print(response["book_details"]["id_value"])
-    print(book)
+    book = Book.query.filter_by(id_value=book_details["id_value"]).first()
+    if book is None:
+        new_book = Book(
+            id_value=book_details['id_value'],
+            product_id_type=book_details['product_id_type'],
+            title_text=book_details['title_text'],
+        )
+        db.session.add(new_book)
+        db.session.commit()
+        book_id = new_book.id
+    else:
+        book_id = book.id
+
+    for country_short_code in countries_included:
+        if country_short_code == "WORLD":
+            break
+        country = Country.query.filter_by(
+            country_short_code=country_short_code
+        ).first()
+        if country:
+            with Session(engine) as session:
+                stmt = book_country.insert().values(
+                    book_id=book_id, country_id=country.id
+                )
+                session.execute(stmt)
+                session.commit()
+
     return jsonify(response)
 
 
