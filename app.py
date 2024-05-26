@@ -1,8 +1,7 @@
 from flask import Flask, request, jsonify, render_template
 import os
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import Integer, String
-from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
+from sqlalchemy.orm import DeclarativeBase
 from utils.book import get_xml_book_details
 
 print(os.environ.get('VIRTUAL_ENV'))
@@ -32,6 +31,11 @@ class Book(db.Model):
     countries_included = db.relationship(
         'Country', secondary='book_country', backref='books'
     )
+
+    def __init__(self, product_id_type, id_value, title_text):
+        self.product_id_type = product_id_type
+        self.id_value = id_value
+        self.title_text = title_text
 
 
 class Country(db.Model):
@@ -69,6 +73,23 @@ def hello_world():
 @app.route("/read_xml")
 def read_xml():
     response = get_xml_book_details()
+    book_details = response["book_details"]
+    countries_included = response["countries_included"]
+    book = Book.query.filter_by(
+        id_value=response["book_details"]["id_value"]
+    ).first()
+    if book is None:
+        print("Make a book")
+        book = Book(
+            book_details['id_value'],
+            book_details['product_id_type'],
+            book_details['title_text'],
+        )
+        db.session.add(book)
+        db.session.commit()
+
+    print(response["book_details"]["id_value"])
+    print(book)
     return jsonify(response)
 
 

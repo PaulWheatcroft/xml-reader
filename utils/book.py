@@ -1,5 +1,4 @@
 import xml.etree.ElementTree as ET
-from flask import jsonify
 import re
 
 
@@ -7,14 +6,11 @@ book_details = {"product_id_type": "", "id_value": "", "title_text": ""}
 countries_included = []
 
 
-def get_xml_book_details():
-    xml_content = None
-    xml_file_path = "sample_data/4.xml"
-
-    with open(xml_file_path, "r") as file:
-        xml_content = file.read()
-
+def extract_book_details_from_xml(xml_content):
     root = ET.fromstring(xml_content)
+    book_details = {}
+    countries_included = []
+
     for element in root.iter():
         if element.tag in ['ProductIDType', 'b221'] and element.text:
             book_details['product_id_type'] = element.text
@@ -27,11 +23,21 @@ def get_xml_book_details():
             and element.text
         ):
             string_countries = element.text
-            countries_included.append(re.split(r'\s+', string_countries))
+            countries_included.extend(re.split(r'\s+', string_countries))
 
-    response_data = {
+    return {
         "book_details": book_details,
         "countries_included": countries_included,
     }
+
+
+def get_xml_book_details():
+    xml_content = None
+    xml_file_path = "sample_data/2.xml"
+
+    with open(xml_file_path, "r") as file:
+        xml_content = file.read()
+
+    response_data = extract_book_details_from_xml(xml_content)
 
     return response_data
