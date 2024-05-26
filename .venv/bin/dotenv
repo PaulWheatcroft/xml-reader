@@ -1,0 +1,8 @@
+#!/Users/paulwheatcroft/Projects/perlego-python-engineer-technical-assessment-192e7060c7644868846ec8c21e59e3e4/.venv/bin/python3.10
+# -*- coding: utf-8 -*-
+import re
+import sys
+from dotenv.__main__ import cli
+if __name__ == '__main__':
+    sys.argv[0] = re.sub(r'(-script\.pyw|\.exe)?$', '', sys.argv[0])
+    sys.exit(cli())
