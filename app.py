@@ -2,7 +2,7 @@ from flask import Flask, request, jsonify, render_template
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import create_engine
 from sqlalchemy.orm import DeclarativeBase, Session
-from utils.book import get_xml_book_details
+from book import get_xml_book_details
 
 
 class Base(DeclarativeBase):
@@ -62,9 +62,15 @@ def add_countries_included(countries_included, book_id):
     if countries_included[0] == "WORLD":
         countries = Country.query.all()
     else:
-        countries = Country.query.filter(
-            Country.country_short_code.in_(countries_included)
-        ).all()
+        countries = []
+        for country in countries_included:
+            include_country = Country.query.filter_by(
+                country_short_code=country
+            ).first()
+            if include_country:
+                countries.append(include_country)
+            else:
+                print(f'Country code {country} does not exist')
     for country in countries:
         with Session(engine) as session:
             stmt = book_country.insert().values(
