@@ -3,28 +3,19 @@ from flask import (
     Flask,
     flash,
     request,
-    jsonify,
     render_template,
     redirect,
     make_response,
-    url_for,
 )
-from flask_sqlalchemy import SQLAlchemy
 from werkzeug.utils import secure_filename
 from sqlalchemy import create_engine
-from sqlalchemy.orm import DeclarativeBase, Session
+from sqlalchemy.orm import Session
+from models import Book, Country, book_country, db
 from book import get_xml_book_details
 import secrets
 
 UPLOAD_FOLDER = './uploads'
 ALLOWED_EXTENSIONS = {'xml'}
-
-
-class Base(DeclarativeBase):
-    pass
-
-
-db = SQLAlchemy(model_class=Base)
 
 app = Flask(__name__)
 
@@ -38,6 +29,7 @@ engine = create_engine(
 app.config["SQLALCHEMY_DATABASE_URI"] = (
     "postgresql://admin:1AZwRsAH049P4132WG8Vmt2P@generally-busy-robin.a1.pgedge.io/perlego_interview?sslmode=require"
 )
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 db.init_app(app)
@@ -48,40 +40,6 @@ def allowed_file(filename):
         '.' in filename
         and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
     )
-
-
-class Book(db.Model):
-    __tablename__ = 'books'
-    id = db.Column(db.Integer, primary_key=True)
-    product_id_type = db.Column(db.String(255))
-    id_value = db.Column(db.String(255))
-    title_text = db.Column(db.String(255))
-    countries_included = db.relationship(
-        'Country', secondary='book_country', backref='books'
-    )
-
-    def __init__(self, product_id_type, id_value, title_text):
-        self.product_id_type = product_id_type
-        self.id_value = id_value
-        self.title_text = title_text
-
-
-class Country(db.Model):
-    __tablename__ = 'countries'
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(255))
-    country_short_code = db.Column(db.String(2))
-
-    def __init__(self, country_short_code, name):
-        self.name = name
-        self.country_short_code = country_short_code
-
-
-book_country = db.Table(
-    'book_country',
-    db.Column('book_id', db.Integer, db.ForeignKey('books.id')),
-    db.Column('country_id', db.Integer, db.ForeignKey('countries.id')),
-)
 
 
 def add_new_book(book_details):
