@@ -95,7 +95,7 @@ def add_new_book(book_details):
     return new_book
 
 
-def amend_countries_included(book_id, new_countries_included):
+def amend_countries_included(book_id, new_countries_included, filename):
     current_countries = set(
         row[0]
         for row in db.session.query(book_country.c.country_id)
@@ -104,7 +104,7 @@ def amend_countries_included(book_id, new_countries_included):
     )
     new_countries = []
     if new_countries_included[0] == "WORLD":
-        new_countries = Country.query.all()
+        new_countries = [country.id for country in Country.query.all()]
     else:
         for country in new_countries_included:
             include_country = Country.query.filter_by(
@@ -133,6 +133,7 @@ def amend_countries_included(book_id, new_countries_included):
                 )
             )
             session.commit()
+    os.rename(f"uploads/{filename}", f"uploads/archived_{filename}")
 
 
 # @app.route("/read_xml")
@@ -144,7 +145,7 @@ def read_xml(filename):
     book = Book.query.filter_by(id_value=book_details["id_value"]).first()
     if book is None:
         book = add_new_book(book_details)
-    amend_countries_included(book.id, countries_included)
+    amend_countries_included(book.id, countries_included, filename)
 
     return make_response(response, 200)
 
@@ -152,13 +153,10 @@ def read_xml(filename):
 @app.route('/', methods=['GET', 'POST'])
 def upload_file():
     if request.method == 'POST':
-        # check if the post request has the file part
         if 'file' not in request.files:
             flash('No file part')
             return redirect(request.url)
         file = request.files['file']
-        # If the user does not select a file, the browser submits an
-        # empty file without a filename.
         if file.filename == '':
             flash('No selected file')
             return redirect(request.url)
@@ -167,15 +165,8 @@ def upload_file():
                 filename = secure_filename(file.filename)
                 file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
                 read_xml(filename)
-                os.rename(
-                    f"uploads/{filename}", f"uploads/archived_{filename}"
-                )
                 return render_template(
                     'upload_successful.html', title='Success'
-                )
-            else:
-                return render_template(
-                    'upload_unsuccessful.html', title='Success'
                 )
         return make_response('', 405)
     return render_template('upload.html', title='Home')
