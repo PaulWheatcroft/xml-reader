@@ -1,7 +1,6 @@
 import xml.etree.ElementTree as ET
 import re
 
-
 book_details = {"product_id_type": "", "id_value": "", "title_text": ""}
 countries_included = []
 
@@ -31,9 +30,9 @@ def extract_book_details_from_xml(xml_content):
     }
 
 
-def get_xml_book_details():
+def get_xml_book_details(filename):
     xml_content = None
-    xml_file_path = "sample_data/4.xml"
+    xml_file_path = f"uploads/{filename}"
 
     with open(xml_file_path, "r") as file:
         xml_content = file.read()
