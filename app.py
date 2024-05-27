@@ -16,22 +16,16 @@ import secrets
 
 UPLOAD_FOLDER = './uploads'
 ALLOWED_EXTENSIONS = {'xml'}
+DB_URI = "postgresql://admin:1AZwRsAH049P4132WG8Vmt2P@generally-busy-robin.a1.pgedge.io/perlego_interview?sslmode=require"
 
 app = Flask(__name__)
 
-
 app.secret_key = secrets.token_hex(32)
+engine = create_engine(DB_URI)
 
-engine = create_engine(
-    "postgresql://admin:1AZwRsAH049P4132WG8Vmt2P@generally-busy-robin.a1.pgedge.io/perlego_interview?sslmode=require"
-)
-
-app.config["SQLALCHEMY_DATABASE_URI"] = (
-    "postgresql://admin:1AZwRsAH049P4132WG8Vmt2P@generally-busy-robin.a1.pgedge.io/perlego_interview?sslmode=require"
-)
+app.config["SQLALCHEMY_DATABASE_URI"] = DB_URI
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-
 db.init_app(app)
 
 
@@ -94,7 +88,6 @@ def amend_countries_included(book_id, new_countries_included, filename):
     os.rename(f"uploads/{filename}", f"uploads/archived_{filename}")
 
 
-# @app.route("/read_xml")
 def read_xml(filename):
     response = get_xml_book_details(filename)
     book_details = response["book_details"]
