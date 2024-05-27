@@ -58,44 +58,49 @@ book_country = db.Table(
 )
 
 
-def add_countries_included(country_short_code, book_id):
-    if country_short_code == "WORLD":
-        print("add to everything")
-    country = Country.query.filter_by(
-        country_short_code=country_short_code
-    ).first()
-    if country:
+def add_countries_included(countries_included, book_id):
+    if countries_included[0] == "WORLD":
+        countries = Country.query.all()
+    else:
+        countries = Country.query.filter(
+            Country.country_short_code.in_(countries_included)
+        ).all()
+    for country in countries:
         with Session(engine) as session:
             stmt = book_country.insert().values(
-                book_id=book_id, country_id=country.id
+                book_id=book_id,
+                country_id=country.id,
             )
             session.execute(stmt)
             session.commit()
 
 
 def amend_countries_included(book_id, new_countries_included):
-    current_country_ids = [
+    current_countries = set(
         row.country_id
         for row in db.session.query(book_country.c.country_id)
         .filter_by(book_id=book_id)
         .all()
-    ]
-    new_country_ids = []
-    for new_country_included in new_countries_included:
-        country = Country.query.filter_by(
-            country_short_code=new_country_included
-        ).first()
-        if country:
-            new_country_ids.append(country.id)
-
-    for country_id in new_country_ids:
-        if country_id not in current_country_ids:
-            with Session(engine) as session:
-                stmt = book_country.insert().values(
+    )
+    new_countries = (
+        set(
+            country.id
+            for country in Country.query.filter(
+                Country.country_short_code.in_(new_countries_included)
+            ).all()
+        )
+        if new_countries_included[0] != "WORLD"
+        else set(row.id for row in Country.query.all())
+    )
+    countries_to_add = new_countries - current_countries
+    for country_id in countries_to_add:
+        with Session(engine) as session:
+            session.execute(
+                book_country.insert().values(
                     book_id=book_id, country_id=country_id
                 )
-                session.execute(stmt)
-                session.commit()
+            )
+            session.commit()
 
 
 @app.route('/', methods=['GET', 'POST'])
@@ -133,8 +138,7 @@ def read_xml():
         db.session.add(new_book)
         db.session.commit()
         book_id = new_book.id
-        for country_short_code in countries_included:
-            add_countries_included(country_short_code, book_id)
+        add_countries_included(countries_included, book_id)
     else:
         amend_countries_included(book.id, countries_included)
 
