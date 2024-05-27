@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1>Books</h1>
+    <ul>
+        {% for book in books %}
+            <li>
+                <h2>{{ book.title_text }}</h2>
+                <h3>ID: {{ book.id_value }}</h3>
+                <p>Available in:</p>
+                <ul>
+                    {% for country in book.countries_included %}
+                        <li>{{ country.country_short_code }}</li>
+                    {% endfor %}
+                </ul>
+            </li>
+        {% endfor %}
+    </ul>
+{% endblock %}
