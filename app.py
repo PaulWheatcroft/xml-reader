@@ -93,11 +93,21 @@ def amend_countries_included(book_id, new_countries_included):
         else set(row.id for row in Country.query.all())
     )
     countries_to_add = new_countries - current_countries
+    countries_to_remove = current_countries - new_countries
     for country_id in countries_to_add:
         with Session(engine) as session:
             session.execute(
                 book_country.insert().values(
                     book_id=book_id, country_id=country_id
+                )
+            )
+            session.commit()
+    for country_id in countries_to_remove:
+        with Session(engine) as session:
+            session.execute(
+                book_country.delete().where(
+                    book_country.c.book_id == book_id,
+                    book_country.c.country_id == country_id,
                 )
             )
             session.commit()
