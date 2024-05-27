@@ -2,6 +2,7 @@
 <html>
 <head>
     <title>{% block title %}{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 </head>
 <body>
     <nav>
@@ -10,7 +11,7 @@
             <li><a href="{{ url_for('display_books') }}">Books</a></li>
         </ul>
     </nav>
-    <div id="content">
+    <main id="content">
         {% with messages = get_flashed_messages() %}
             {% if messages %}
                 <ul class="flashes">
@@ -22,6 +23,6 @@
         {% endwith %}
         {% block content %}
         {% endblock %}
-    </div>
+    </main>
 </body>
 </html>
