@@ -1,9 +1,6 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Books</title>
-</head>
-<body>
+{% extends "base.html" %}
+
+{% block content %}
     <h1>Books</h1>
     <ul>
         {% for book in books %}
@@ -19,5 +16,4 @@
             </li>
         {% endfor %}
     </ul>
-</body>
-</html>
+{% endblock %}

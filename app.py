@@ -167,22 +167,15 @@ def upload_file():
                 filename = secure_filename(file.filename)
                 file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
                 read_xml(filename)
-                return make_response(
-                    'File uploaded',
-                    200,
+                return render_template(
+                    'upload_successful.html', title='Success'
                 )
             else:
-                return make_response('File name not supported', 400)
+                return render_template(
+                    'upload_unsuccessful.html', title='Success'
+                )
         return make_response('', 405)
-    return '''
-    <!doctype html>
-    <title>Upload new File</title>
-    <h1>Upload new File</h1>
-    <form method=post enctype=multipart/form-data>
-      <input type=file name=file>
-      <input type=submit value=Upload>
-    </form>
-    '''
+    return render_template('upload.html', title='Home')
 
 
 @app.route('/books')
