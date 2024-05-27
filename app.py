@@ -167,6 +167,9 @@ def upload_file():
                 filename = secure_filename(file.filename)
                 file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
                 read_xml(filename)
+                os.rename(
+                    f"uploads/{filename}", f"uploads/archived_{filename}"
+                )
                 return render_template(
                     'upload_successful.html', title='Success'
                 )
