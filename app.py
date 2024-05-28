@@ -7,6 +7,7 @@ from flask import (
     redirect,
     make_response,
 )
+from dotenv import load_dotenv
 from werkzeug.utils import secure_filename
 from sqlalchemy import create_engine
 from sqlalchemy.orm import Session
@@ -14,14 +15,15 @@ from models import Book, Country, book_country, db
 from book import get_xml_book_details
 import secrets
 
-UPLOAD_FOLDER = './uploads'
-ALLOWED_EXTENSIONS = {'xml'}
-DB_URI = "postgresql://admin:1AZwRsAH049P4132WG8Vmt2P@generally-busy-robin.a1.pgedge.io/perlego_interview?sslmode=require"
+UPLOAD_FOLDER = os.getenv("UPLOAD_FOLDER")
+ALLOWED_EXTENSIONS = os.getenv("ALLOWED_EXTENSIONS")
+DB_URI = os.getenv("DB_URI")
 
 app = Flask(__name__)
 
 app.secret_key = secrets.token_hex(32)
-engine = create_engine(DB_URI)
+if DB_URI:
+    engine = create_engine(DB_URI)
 
 app.config["SQLALCHEMY_DATABASE_URI"] = DB_URI
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
