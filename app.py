@@ -15,9 +15,11 @@ from models import Book, Country, book_country, db
 from book import get_xml_book_details
 import secrets
 
-UPLOAD_FOLDER = os.getenv("UPLOAD_FOLDER")
-ALLOWED_EXTENSIONS = os.getenv("ALLOWED_EXTENSIONS")
-DB_URI = os.getenv("DB_URI")
+load_dotenv()
+
+UPLOAD_FOLDER = os.getenv('UPLOAD_FOLDER')
+ALLOWED_EXTENSIONS = os.getenv('ALLOWED_EXTENSIONS')
+DB_URI = os.getenv('DB_URI')
 
 app = Flask(__name__)
 
