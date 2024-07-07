@@ -16,16 +16,18 @@
             <span class="logged-out">You are not logged in</span>
         {% endif %}
     </nav>
-    <main id="content">
+    <div id="flash-messages">
         {% with messages = get_flashed_messages() %}
-            {% if messages %}
-                <ul class="flashes">
-                    {% for message in messages %}
-                        <li>{{ message }}</li>
-                    {% endfor %}
-                </ul>
-            {% endif %}
-        {% endwith %}
+        {% if messages %}
+            <div class="flashes">
+                {% for message in messages %}
+                    <p>{{ message }}</p>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+    </div>
+    <main id="content">
         {% block content %}
         {% endblock %}
     </main>
