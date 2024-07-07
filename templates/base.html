@@ -10,6 +10,11 @@
             <li><a href="{{ url_for('upload_file') }}">Upload</a></li>
             <li><a href="{{ url_for('display_books') }}">Books</a></li>
         </ul>
+        {% if session.get('logged_in') %}
+            <span class="logged-in">You are logged in</span>
+        {% else %}
+            <span class="logged-out">You are not logged in</span>
+        {% endif %}
     </nav>
     <main id="content">
         {% with messages = get_flashed_messages() %}

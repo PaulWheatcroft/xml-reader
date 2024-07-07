@@ -35,6 +35,24 @@ nav li a:hover {
     background-color: #1E90FF;
 }
 
+.logged-in {
+    background-color: #4CAF50;
+    color: #fff;
+    font-size: 10px;
+    padding: 2px 5px 2px 5px;
+    box-shadow: 1px 1px 0 black;
+    border-radius: 2px;
+}
+
+.logged-out {
+    background-color: #af4c54;
+    color: #fff;
+    font-size: 10px;
+    padding: 2px 5px 2px 5px;
+    box-shadow: 1px 1px 0 black;
+    border-radius: 2px;
+}
+
 main {
     padding: 20px;
 }
