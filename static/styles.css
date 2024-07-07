@@ -35,22 +35,24 @@ nav li a:hover {
     background-color: #1E90FF;
 }
 
-.logged-in {
-    background-color: #4CAF50;
+.logged-in,
+.logged-out {
+    display: inline-block;
+    margin-left: auto;
     color: #fff;
     font-size: 10px;
     padding: 2px 5px 2px 5px;
     box-shadow: 1px 1px 0 black;
     border-radius: 2px;
+    margin-right: 40px;
+}
+
+.logged-in {
+    background-color: #4CAF50;
 }
 
 .logged-out {
     background-color: #af4c54;
-    color: #fff;
-    font-size: 10px;
-    padding: 2px 5px 2px 5px;
-    box-shadow: 1px 1px 0 black;
-    border-radius: 2px;
 }
 
 #flash-messages {
@@ -68,10 +70,37 @@ main {
     padding: 0 20px 0 20px;
 }
 
-.upload-form {
-    display: flex;
+h1 {
+    text-align: center;
+}
+
+.login-form {
     width: 300px;
-    flex-direction: column;
+    margin: 0 auto;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.login-form input[type="text"],
+.login-form input[type="password"],
+.login-form button {
+    width: 100%;
+    margin-bottom: 10px;
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+}
+
+.login-form button {
+    background-color: #007bff;
+    color: white;
+    cursor: pointer;
+}
+
+.upload-form {
+    margin: 0 auto;
+    width: 300px;
     align-items: left;
     justify-content: center;
     border: 1px solid #ccc;

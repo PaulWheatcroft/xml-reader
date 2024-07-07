@@ -8,7 +8,11 @@
                 <h2>Title: {{ book.title_text }}</h2>
                 <h3>ID: {{ book.id_value }}</h3>
                 {% if book.countries_included|length > 1 %}
-                <p>Available in: {{book.countries_included|length}} {% if book.countries_included|length == 1 %} Country {% else %} Countries {% endif %}</p>
+                    <p>Available in: {{book.countries_included|length}} Countries</p>
+                {% elif book.countries_included|length == 1 %}
+                    <p>Available in: {{book.countries_included|length}} Country</p>
+                {% else %}
+                    <p>Available in: Zero Countries</p>
                 {% endif %}
                 {% if book.countries_included|length == 248 %}
                     <span class="world-chip">All Countries</span>
