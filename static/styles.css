@@ -123,3 +123,17 @@ main {
     margin-top: 5px;
     margin-bottom: 5px;
   }
+
+  .world-chip {
+    display: inline-block;
+    text-align: center;
+    height: 13px;
+    width: 79px;
+    color: white;
+    font-size: 10px;
+    padding: 5px;
+    border-radius: 3px;
+    background-color: #4c4caf;
+    margin-top: 5px;
+    margin-bottom: 5px;
+  }

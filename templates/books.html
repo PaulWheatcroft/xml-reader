@@ -7,10 +7,16 @@
             <li class="style-book">
                 <h2>Title: {{ book.title_text }}</h2>
                 <h3>ID: {{ book.id_value }}</h3>
-                <p>Available in:</p>
-                {% for country in book.countries_included %}
-                    <span class="country-chip">{{ country.country_short_code }}</span>
-                {% endfor %}
+                {% if book.countries_included|length > 1 %}
+                <p>Available in: {{book.countries_included|length}} {% if book.countries_included|length == 1 %} Country {% else %} Countries {% endif %}</p>
+                {% endif %}
+                {% if book.countries_included|length == 248 %}
+                    <span class="world-chip">All Countries</span>
+                {% else %}
+                    {% for country in book.countries_included %}
+                        <span class="country-chip">{{ country.country_short_code }}</span>
+                    {% endfor %}
+                {% endif %}
             </li>
         {% endfor %}
     </ul>
