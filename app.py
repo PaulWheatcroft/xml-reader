@@ -123,6 +123,9 @@ def login():
 
 @app.route('/', methods=['GET', 'POST'])
 def upload_file():
+    if 'logged_in' not in session or not session['logged_in']:
+        return render_template('login.html', error='Please log in to upload a file.')
+
     if request.method == 'POST':
         if 'file' not in request.files:
             flash('No file part')
@@ -131,6 +134,7 @@ def upload_file():
         if file.filename == '':
             flash('No selected file')
             return redirect(request.url)
+
         if file and allowed_file(file.filename):
             if file.filename is not None:
                 filename = secure_filename(file.filename)
