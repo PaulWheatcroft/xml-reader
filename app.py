@@ -2,10 +2,12 @@ import os
 from flask import (
     Flask,
     flash,
-    request,
-    render_template,
-    redirect,
     make_response,
+    redirect,
+    render_template,
+    request,
+    session,
+    url_for,
 )
 from dotenv import load_dotenv
 from werkzeug.utils import secure_filename
@@ -20,6 +22,8 @@ load_dotenv()
 UPLOAD_FOLDER = os.getenv('UPLOAD_FOLDER')
 ALLOWED_EXTENSIONS = os.getenv('ALLOWED_EXTENSIONS')
 DB_URI = os.getenv('DB_URI')
+USERNAME = os.environ.get('USERNAME')
+PASSWORD = os.environ.get('PASSWORD')
 
 app = Flask(__name__)
 
@@ -103,6 +107,18 @@ def read_xml(filename):
     amend_countries_included(book.id, countries_included, filename)
 
     return make_response(response, 200)
+
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    form_username = request.form.get('username')
+    form_password = request.form.get('password')
+
+    if form_username == USERNAME and form_password == PASSWORD:
+        session['logged_in'] = True
+        return redirect(url_for('upload_file'))
+    else:
+        return render_template('login.html', error='Invalid username or password')
 
 
 @app.route('/', methods=['GET', 'POST'])
