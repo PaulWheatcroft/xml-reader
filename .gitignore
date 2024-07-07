@@ -7,4 +7,3 @@ logs/
 *.log
 *.pyc
 .env
-.env
