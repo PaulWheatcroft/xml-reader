@@ -4,6 +4,7 @@
     <title>{% block title %}{% endblock %}</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
     <script src="{{url_for('static', filename='processing.js')}}"></script>
+    <script src="{{url_for('static', filename='removeFlashMessage.js')}}"></script>
 </head>
 <body>
     <nav>
@@ -19,14 +20,15 @@
     </nav>
     <div id="flash-messages">
         {% with messages = get_flashed_messages() %}
-        {% if messages %}
-            <div class="flashes">
+            {% if messages %}
                 {% for message in messages %}
-                    <p>{{ message }}</p>
-                {% endfor %}
-            </div>
-        {% endif %}
-    {% endwith %}
+                    <div id="flash-message">
+                        <p>{{ message }}</p>
+                        <button onclick="removeFlash()" id="remove-flash-message-button">close</button>
+                    </div>
+                    {% endfor %}
+            {% endif %}
+        {% endwith %}
     </div>
     <main id="content">
         {% block content %}
