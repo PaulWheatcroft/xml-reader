@@ -128,22 +128,23 @@ def upload_file():
 
     if request.method == 'POST':
         if 'file' not in request.files:
+            print(f"No {request.files} in request.file")
             flash('No file part')
-            return redirect(request.url)
+            return render_template('upload.html', error='Please select a correct file.')
         file = request.files['file']
         if file.filename == '':
-            flash('No selected file')
-            return redirect(request.url)
+            flash('No file selected')
+            return render_template('upload.html', error='Please select a file.')
 
         if file and allowed_file(file.filename):
             if file.filename is not None:
                 filename = secure_filename(file.filename)
                 file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
                 read_xml(filename)
-                return render_template(
-                    'upload_successful.html', title='Success'
-                )
-        return make_response('', 405)
+                flash('Upload successful')
+                return redirect(url_for('display_books'))
+        flash('Please select a correct file')
+        return render_template('upload.html', error='Please select a correct file.')
     return render_template('upload.html', title='Home')
 
 

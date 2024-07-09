@@ -5,8 +5,12 @@
     <h1>Upload New File</h1>
     <form class="upload-form" method=post enctype=multipart/form-data>
       <input type=file name=file>
-      <input type=submit value=Upload>
+      <input type=submit value=Upload onclick="processingFile()">
     </form>
+    <div id="processing-message">
+      <p >Your file is being processed</p>
+      <img src="{{url_for('static', filename='loading.gif')}}" align="middle" />
+    </div>
   {% else %}
     <p>Please log in to upload a file.</p>
     <a href="/login">Login</a>
