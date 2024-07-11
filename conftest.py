@@ -1,30 +1,15 @@
 import pytest
-from models import Base
+from models import Base, Book
 
 
 @pytest.fixture(scope="function")
 def sqlalchemy_declarative_base():
     return Base
 
+book1 = Book(1, 111, "first")
+book2 = Book(2, 222, "second")
+
 
 @pytest.fixture(scope="function")
 def sqlalchemy_mock_books():
-    return [
-        (
-            "books",
-            [
-                {
-                    "id": 1,
-                    "product_id_type": "15",
-                    "id_value": "111",
-                    "title_text": "First",
-                },
-                {
-                    "id": 2,
-                    "product_id_type": "15",
-                    "id_value": "222",
-                    "title_text": "Second",
-                },
-            ],
-        )
-    ]
+    return [book1, book2]

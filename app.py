@@ -44,14 +44,17 @@ def allowed_file(filename):
     )
 
 
-def add_new_book(book_details):
+def add_new_book(book_details, db_session):
+    if db_session is None:
+        raise ValueError("db_session is required")
+    
     new_book = Book(
         id_value=book_details['id_value'],
         product_id_type=book_details['product_id_type'],
         title_text=book_details['title_text'],
     )
-    db.session.add(new_book)
-    db.session.commit()
+    db_session.add(new_book)
+    db_session.commit()
     return new_book
 
 
@@ -73,6 +76,7 @@ def amend_countries_included(book_id, new_countries_included, filename):
             if include_country:
                 new_countries.append(include_country.id)
             else:
+                flash(f'Country code {country} does not exist')
                 print(f'Country code {country} does not exist')
     countries_to_add = set(new_countries) - current_countries
     countries_to_remove = current_countries - set(new_countries)
@@ -100,13 +104,17 @@ def read_xml(filename):
     response = get_xml_book_details(filename)
     book_details = response["book_details"]
     countries_included = response["countries_included"]
-
     book = Book.query.filter_by(id_value=book_details["id_value"]).first()
     if book is None:
-        book = add_new_book(book_details)
+        book = add_new_book(book_details, db_session=db.session)
     amend_countries_included(book.id, countries_included, filename)
 
     return make_response(response, 200)
+
+def log_out():
+    session['logged_in'] = False
+    flash("You have logged out")
+    return render_template('login.html')
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -151,6 +159,7 @@ def upload_file():
 @app.route('/books')
 def display_books():
     books = Book.query.all()
+    print("*** display books ***", books)
     return render_template('books.html', books=books)
 
 
